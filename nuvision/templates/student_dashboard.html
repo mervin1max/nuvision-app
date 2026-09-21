@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<h1>Welcome, {{ current_user.full_name }}</h1>
+
+{% if phase.warning %}
+  <div class="banner banner-{{ phase.warning[0] }}">{{ phase.warning[1] }}</div>
+{% endif %}
+
+<section class="timeline">
+  <h2>Election Timeline</h2>
+  <div class="timeline-grid">
+    <div class="timeline-step {{ 'active' if phase.applications_open else ('done' if phase.applications_closed else '') }}">
+      <h3>Applications</h3>
+      <p>{{ config.application_start | fmt }} &rarr; {{ config.application_end | fmt }}</p>
+    </div>
+    <div class="timeline-step {{ 'active' if phase.campaign_open else '' }}">
+      <h3>Campaigning</h3>
+      <p>Starts {{ config.campaign_start | fmt }}</p>
+    </div>
+    <div class="timeline-step {{ 'active' if phase.voting_open else ('done' if phase.voting_closed else '') }}">
+      <h3>Voting</h3>
+      <p>{{ config.voting_start | fmt }} &rarr; {{ config.voting_end | fmt }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Your Application</h2>
+  {% if my_application %}
+    <table class="mini-table">
+      <tr><th>Position</th><td>{{ my_application.position_name }}</td></tr>
+      <tr><th>Submitted</th><td>{{ my_application.submitted_at | fmt }}</td></tr>
+      <tr><th>Status</th><td><span class="status status-{{ my_application.status }}">{{ my_application.status.replace('_',' ') | title }}</span></td></tr>
+      {% if my_application.feedback %}
+        <tr><th>Feedback from DM</th><td>{{ my_application.feedback }}</td></tr>
+      {% endif %}
+    </table>
+  {% elif phase.applications_open %}
+    <p>You haven't applied yet. Applications are open now!</p>
+    <a class="btn btn-primary" href="{{ url_for('student_apply') }}">Submit Application Letter</a>
+  {% elif phase.applications_upcoming %}
+    <p>Applications haven't opened yet. Check back on {{ config.application_start | fmt }}.</p>
+  {% else %}
+    <p class="muted">The application window is closed. You did not submit an application.</p>
+  {% endif %}
+</section>
+
+{% if candidates %}
+<section class="panel">
+  <h2>Meet the Candidates</h2>
+  <div class="candidate-grid">
+    {% for c in candidates %}
+      <div class="candidate-card">
+        <h3>{{ c.full_name }} <small>"{{ c.nickname }}"</small></h3>
+        <p class="position-tag">{{ c.position_name }}</p>
+        {% if c.manifesto %}<p>{{ c.manifesto }}</p>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h2>Voting</h2>
+  {% if phase.voting_open %}
+    <p>Voting is open now.</p>
+    <a class="btn btn-primary" href="{{ url_for('student_vote') }}">Go to Ballot</a>
+  {% elif phase.voting_closed %}
+    <p class="muted">Voting has closed.</p>
+  {% else %}
+    <p class="muted">Voting hasn't opened yet.</p>
+  {% endif %}
+</section>
+
+{% if winners %}
+<section class="panel winners-panel">
+  <h2>🏆 Announced Winners</h2>
+  <ul>
+    {% for w in winners %}
+      <li><strong>{{ w.position_name }}:</strong> {{ w.full_name }} ("{{ w.nickname }}")</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

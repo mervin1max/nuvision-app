@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Nuvision High School Elections{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('index') }}">
+    <span class="brand-mark">NV</span>
+    <span class="brand-text">Nuvision High School <small>Student Council Elections</small></span>
+  </a>
+  <nav>
+    {% if current_user %}
+      {% if current_user.role == 'dm' %}
+        <a href="{{ url_for('dm_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('dm_applications') }}">Applications</a>
+        <a href="{{ url_for('dm_results') }}">Live Results</a>
+        <a href="{{ url_for('dm_settings') }}">Positions &amp; Dates</a>
+        <a href="{{ url_for('dm_viewers') }}">Access</a>
+      {% elif current_user.role == 'viewer' %}
+        <a href="{{ url_for('viewer_results') }}">Live Results</a>
+      {% else %}
+        <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+      {% endif %}
+      <span class="who">{{ current_user.full_name }}</span>
+      <a href="{{ url_for('logout') }}" class="logout">Log out</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <p>Nuvision High School &middot; Student Council Election System</p>
+</footer>
+</body>
+</html>

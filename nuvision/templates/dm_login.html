@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Discipline Master Log In{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Discipline Master / Staff Log In</h1>
+  <form method="post">
+    <label>Nickname
+      <input type="text" name="nickname" required autofocus>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button class="btn btn-primary" type="submit">Log In</button>
+  </form>
+  {% if not dm_exists %}
+    <p class="muted">No Discipline Master account yet. <a href="{{ url_for('dm_setup') }}">Set one up</a></p>
+  {% endif %}
+</div>
+{% endblock %}

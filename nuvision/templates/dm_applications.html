@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Review Applications{% endblock %}
+{% block content %}
+<h1>Applications</h1>
+
+<div class="filter-row">
+  <a class="chip {{ 'chip-active' if not status_filter }}" href="{{ url_for('dm_applications') }}">All</a>
+  <a class="chip {{ 'chip-active' if status_filter=='pending' }}" href="{{ url_for('dm_applications', status='pending') }}">Pending</a>
+  <a class="chip {{ 'chip-active' if status_filter=='interview_approved' }}" href="{{ url_for('dm_applications', status='interview_approved') }}">Interview Approved</a>
+  <a class="chip {{ 'chip-active' if status_filter=='candidate' }}" href="{{ url_for('dm_applications', status='candidate') }}">Confirmed Candidates</a>
+  <a class="chip {{ 'chip-active' if status_filter=='rejected' }}" href="{{ url_for('dm_applications', status='rejected') }}">Rejected</a>
+  <a class="chip {{ 'chip-active' if status_filter=='not_selected' }}" href="{{ url_for('dm_applications', status='not_selected') }}">Not Selected</a>
+</div>
+
+{% if not applications %}
+  <p class="muted">No applications found.</p>
+{% endif %}
+
+{% for a in applications %}
+  <div class="app-card">
+    <div class="app-card-head">
+      <h3>{{ a.full_name }} <small>"{{ a.nickname }}"</small></h3>
+      <span class="status status-{{ a.status }}">{{ a.status.replace('_',' ') | title }}</span>
+    </div>
+    <p><strong>Position:</strong> {{ a.position_name }} &nbsp;&middot;&nbsp; <strong>Submitted:</strong> {{ a.submitted_at | fmt }}</p>
+    {% if a.manifesto %}<p><strong>Manifesto:</strong> {{ a.manifesto }}</p>{% endif %}
+    <p><a class="btn btn-small" href="{{ url_for('dm_download_upload', filename=a.file_path) }}">Download Letter ({{ a.file_name }})</a></p>
+
+    <form method="post" action="{{ url_for('dm_update_application', app_id=a.id) }}" class="review-form">
+      <label>Feedback to student
+        <textarea name="feedback" rows="2">{{ a.feedback or '' }}</textarea>
+      </label>
+      <div class="btn-row">
+        <button class="btn btn-small btn-secondary" type="submit" name="status" value="interview_approved">Approve for Interview</button>
+        <button class="btn btn-small btn-danger" type="submit" name="status" value="rejected">Reject</button>
+        <button class="btn btn-small btn-success" type="submit" name="status" value="candidate">Confirm as Candidate (won interview)</button>
+        <button class="btn btn-small" type="submit" name="status" value="not_selected">Not Selected After Interview</button>
+      </div>
+    </form>
+  </div>
+{% endfor %}
+{% endblock %}

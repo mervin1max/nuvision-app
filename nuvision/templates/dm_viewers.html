@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Manage Results Access{% endblock %}
+{% block content %}
+<h1>Grant Results Access</h1>
+<p class="muted">Only you can give others the ability to see live results. Viewer accounts can only see the
+live results page — they cannot change dates, positions, or applications.</p>
+
+<div class="form-card">
+  <form method="post">
+    <label>Full Name
+      <input type="text" name="full_name" required>
+    </label>
+    <label>Nickname (used to log in via the DM/Staff login page)
+      <input type="text" name="nickname" required>
+    </label>
+    <label>Password
+      <input type="password" name="password" required minlength="4">
+    </label>
+    <button class="btn btn-primary" type="submit">Grant Access</button>
+  </form>
+</div>
+
+<section class="panel">
+  <h2>Current Viewers</h2>
+  {% if not viewers %}
+    <p class="muted">No one else has results access yet.</p>
+  {% endif %}
+  <ul class="viewer-list">
+    {% for v in viewers %}
+      <li>
+        {{ v.full_name }} ("{{ v.nickname }}") &mdash; granted {{ v.created_at | fmt }}
+        <form method="post" action="{{ url_for('dm_delete_viewer', user_id=v.id) }}" class="inline-form"
+              onsubmit="return confirm('Revoke access for this person?');">
+          <button class="link-btn" type="submit">revoke</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

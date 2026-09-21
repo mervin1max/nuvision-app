@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Live Results{% endblock %}
+{% block content %}
+<h1>Live Results <span class="live-dot" title="Updating automatically"></span></h1>
+<p class="muted">This view is only visible to you (the Discipline Master) and anyone you've granted results access to.
+It refreshes automatically every few seconds as votes come in.</p>
+
+<div id="results-root">Loading results&hellip;</div>
+
+<section class="panel">
+  <h2>Announce a Winner</h2>
+  <p class="muted">Pick the winning candidate for a position once voting has closed (or earlier, if you've decided
+  based on the interview). Announcing makes the result visible to all students immediately.</p>
+  {% for pos in positions %}
+    <form method="post" action="{{ url_for('dm_announce', position_id=pos.id) }}" class="announce-form" data-position="{{ pos.id }}">
+      <strong>{{ pos.name }}</strong>
+      <select name="application_id" class="announce-select" data-position="{{ pos.id }}">
+        <option value="">Choose winning candidate&hellip;</option>
+      </select>
+      <button class="btn btn-small btn-success" type="submit">
+        {% if pos.winner_application_id %}Re-announce{% else %}Announce Winner{% endif %}
+      </button>
+      {% if pos.winner_application_id %}<span class="tag tag-open">Winner announced</span>{% endif %}
+    </form>
+  {% endfor %}
+</section>
+
+<script>
+async function refreshResults() {
+  try {
+    const res = await fetch("{{ url_for('api_results') }}");
+    if (!res.ok) throw new Error("Request failed");
+    const data = await res.json();
+    const root = document.getElementById("results-root");
+    root.innerHTML = "";
+
+    data.positions.forEach(pos => {
+      const section = document.createElement("div");
+      section.className = "panel results-position";
+      const heading = document.createElement("h2");
+      heading.textContent = pos.position_name + " — " + pos.total_votes + " vote(s)";
+      section.appendChild(heading);
+
+      if (pos.candidates.length === 0) {
+        const p = document.createElement("p");
+        p.className = "muted";
+        p.textContent = "No confirmed candidates yet.";
+        section.appendChild(p);
+      }
+
+      pos.candidates.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        const label = document.createElement("div");
+        label.className = "bar-label";
+        label.textContent = c.name + ' ("' + c.nickname + '") — ' + c.votes + " vote(s), " + c.pct + "%";
+        const track = document.createElement("div");
+        track.className = "bar-track";
+        const fill = document.createElement("div");
+        fill.className = "bar-fill";
+        fill.style.width = c.pct + "%";
+        if (pos.winner_application_id === c.application_id) {
+          fill.classList.add("bar-winner");
+        }
+        track.appendChild(fill);
+        row.appendChild(label);
+        row.appendChild(track);
+        section.appendChild(row);
+      });
+
+      root.appendChild(section);
+
+      // populate the matching "announce winner" dropdown, preserving current selection
+      const select = document.querySelector('select.announce-select[data-position="' + pos.position_id + '"]');
+      if (select) {
+        const current = select.value;
+        select.innerHTML = '<option value="">Choose winning candidate&hellip;</option>';
+        pos.candidates.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.application_id;
+          opt.textContent = c.name + ' ("' + c.nickname + '") — ' + c.votes + " votes";
+          if (pos.winner_application_id === c.application_id) opt.selected = true;
+          select.appendChild(opt);
+        });
+        if (current && !pos.winner_application_id) select.value = current;
+      }
+    });
+  } catch (e) {
+    console.error("Could not refresh results", e);
+  }
+}
+refreshResults();
+setInterval(refreshResults, 4000);
+</script>
+{% endblock %}

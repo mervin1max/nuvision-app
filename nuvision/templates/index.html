@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Nuvision High School Elections{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Student Council Elections</h1>
+  <p>Register, apply for a position, campaign, and vote — all in one place.</p>
+</section>
+
+<div class="card-grid">
+  <div class="portal-card">
+    <h2>Students</h2>
+    <p>Create an account with your name and a personal nickname to apply for a position or cast your vote.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="{{ url_for('student_login') }}">Student Log In</a>
+      <a class="btn btn-secondary" href="{{ url_for('student_register') }}">Create Account</a>
+    </div>
+  </div>
+
+  <div class="portal-card portal-card-dm">
+    <h2>Discipline Master</h2>
+    <p>Set the election schedule, review applications, run interviews, and watch results live.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="{{ url_for('dm_login') }}">DM / Staff Log In</a>
+      {% if not dm_exists %}
+        <a class="btn btn-secondary" href="{{ url_for('dm_setup') }}">First-time Setup</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<section class="winners-teaser">
+  <a href="{{ url_for('student_login') }}">Log in to see the election timeline and any announced winners &rarr;</a>
+</section>
+{% endblock %}

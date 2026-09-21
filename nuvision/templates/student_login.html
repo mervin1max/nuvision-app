@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Student Log In{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Student Log In</h1>
+  <form method="post">
+    <label>Nickname
+      <input type="text" name="nickname" required autofocus>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button class="btn btn-primary" type="submit">Log In</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('student_register') }}">Create an account</a></p>
+</div>
+{% endblock %}

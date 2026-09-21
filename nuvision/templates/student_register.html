@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Create Your Student Account{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Create Your Student Account</h1>
+  <p class="muted">Use your real name for identification, plus a personal nickname and password you'll use to log in.</p>
+  <form method="post">
+    <label>Full Name
+      <input type="text" name="full_name" value="{{ full_name or '' }}" required autofocus>
+    </label>
+    <label>Personal Nickname
+      <input type="text" name="nickname" value="{{ nickname or '' }}" required minlength="3">
+    </label>
+    <label>Password
+      <input type="password" name="password" required minlength="4">
+    </label>
+    <label>Confirm Password
+      <input type="password" name="confirm" required minlength="4">
+    </label>
+    <button class="btn btn-primary" type="submit">Create Account</button>
+  </form>
+  <p class="muted">Already have an account? <a href="{{ url_for('student_login') }}">Log in</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Discipline Master Dashboard{% endblock %}
+{% block content %}
+<h1>Discipline Master Dashboard</h1>
+<p class="muted">You are logged in as the Discipline Master. Only you can set the schedule, positions, decide
+interview outcomes, and grant others access to live results.</p>
+
+<div class="stat-grid">
+  <div class="stat-card"><span class="stat-num">{{ counts.students }}</span><span>Registered Students</span></div>
+  <div class="stat-card"><span class="stat-num">{{ counts.applications }}</span><span>Applications</span></div>
+  <div class="stat-card"><span class="stat-num">{{ counts.pending }}</span><span>Awaiting Review</span></div>
+  <div class="stat-card"><span class="stat-num">{{ counts.candidates }}</span><span>Confirmed Candidates</span></div>
+  <div class="stat-card"><span class="stat-num">{{ counts.votes }}</span><span>Votes Cast</span></div>
+  <div class="stat-card"><span class="stat-num">{{ counts.positions }}</span><span>Positions</span></div>
+</div>
+
+<section class="panel">
+  <h2>Current Phase</h2>
+  <ul class="phase-list">
+    <li>Applications: {% if phase.applications_open %}<span class="tag tag-open">Open now</span>{% elif phase.applications_upcoming %}<span class="tag">Upcoming</span>{% else %}<span class="tag tag-closed">Closed</span>{% endif %}</li>
+    <li>Campaigning: {% if phase.campaign_open %}<span class="tag tag-open">Active</span>{% else %}<span class="tag">Not active</span>{% endif %}</li>
+    <li>Voting: {% if phase.voting_open %}<span class="tag tag-open">Open now</span>{% elif phase.voting_closed %}<span class="tag tag-closed">Closed</span>{% else %}<span class="tag">Not started</span>{% endif %}</li>
+  </ul>
+  <a class="btn btn-secondary" href="{{ url_for('dm_settings') }}">Manage Positions &amp; Schedule</a>
+</section>
+
+<div class="btn-row">
+  <a class="btn btn-primary" href="{{ url_for('dm_applications') }}">Review Applications</a>
+  <a class="btn btn-primary" href="{{ url_for('dm_results') }}">View Live Results</a>
+  <a class="btn btn-secondary" href="{{ url_for('dm_viewers') }}">Grant Results Access</a>
+</div>
+{% endblock %}

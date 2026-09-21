@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cast Your Vote{% endblock %}
+{% block content %}
+<div class="form-card wide">
+  <h1>Your Ballot</h1>
+  <p class="muted">You may vote once per position. Positions you've already voted for are shown as recorded and can't be changed.</p>
+  <form method="post">
+    {% for pos in positions %}
+      <fieldset class="ballot-position">
+        <legend>{{ pos.name }}</legend>
+        {% set cands = candidates_by_position[pos.id] %}
+        {% if not cands %}
+          <p class="muted">No confirmed candidates for this position.</p>
+        {% elif pos.id in my_votes %}
+          <p class="voted-note">✓ Your vote for this position has been recorded.</p>
+        {% else %}
+          {% for c in cands %}
+            <label class="ballot-option">
+              <input type="radio" name="position_{{ pos.id }}" value="{{ c.id }}" required>
+              <span><strong>{{ c.full_name }}</strong> ("{{ c.nickname }}")
+                {% if c.manifesto %}<br><small>{{ c.manifesto }}</small>{% endif %}
+              </span>
+            </label>
+          {% endfor %}
+        {% endif %}
+      </fieldset>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Submit My Vote(s)</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Discipline Master Setup{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>First-time Discipline Master Setup</h1>
+  <p class="muted">This creates the one account that controls the election: positions, dates, application review,
+  interview decisions, winners, and who else may view live results. It requires the secret setup code given to you
+  by whoever installed this site.</p>
+  <form method="post">
+    <label>Setup Code
+      <input type="password" name="setup_code" required autofocus>
+    </label>
+    <label>Full Name
+      <input type="text" name="full_name" value="{{ full_name or '' }}" required>
+    </label>
+    <label>Nickname (used to log in)
+      <input type="text" name="nickname" value="{{ nickname or '' }}" required>
+    </label>
+    <label>Password
+      <input type="password" name="password" required minlength="4">
+    </label>
+    <label>Confirm Password
+      <input type="password" name="confirm" required minlength="4">
+    </label>
+    <button class="btn btn-primary" type="submit">Create Discipline Master Account</button>
+  </form>
+</div>
+{% endblock %}

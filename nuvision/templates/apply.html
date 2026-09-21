@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Submit Application{% endblock %}
+{% block content %}
+<div class="form-card">
+  <h1>Submit Your Application Letter</h1>
+  {% if phase.warning %}
+    <div class="banner banner-{{ phase.warning[0] }}">{{ phase.warning[1] }}</div>
+  {% endif %}
+  <p class="muted">Upload your application letter as a Word document (.doc/.docx) or PDF. Once submitted, you cannot
+  change your application — make sure it's ready before you upload.</p>
+  <form method="post" enctype="multipart/form-data">
+    <label>Position you're applying for
+      <select name="position_id" required>
+        <option value="" disabled selected>Choose a position&hellip;</option>
+        {% for p in positions %}
+          <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Short manifesto (optional, shown to voters during campaigning)
+      <textarea name="manifesto" rows="4" maxlength="600" placeholder="Why should students vote for you?"></textarea>
+    </label>
+    <label>Application Letter (.doc, .docx, or .pdf)
+      <input type="file" name="letter" accept=".doc,.docx,.pdf" required>
+    </label>
+    <button class="btn btn-primary" type="submit">Submit Application</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Positions &amp; Schedule{% endblock %}
+{% block content %}
+<h1>Positions &amp; Election Schedule</h1>
+<p class="muted">Only you can change these. Students will see warnings automatically as the application deadline
+approaches.</p>
+
+<section class="panel">
+  <h2>Available Positions</h2>
+  <ul class="position-list">
+    {% for p in positions %}
+      <li>
+        {{ p.name }}
+        {% if not p.winner_application_id %}
+        <form method="post" action="{{ url_for('dm_delete_position', position_id=p.id) }}" class="inline-form"
+              onsubmit="return confirm('Remove this position?');">
+          <button class="link-btn" type="submit">remove</button>
+        </form>
+        {% endif %}
+      </li>
+    {% else %}
+      <li class="muted">No positions added yet.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{{ url_for('dm_add_position') }}" class="inline-form-row">
+    <input type="text" name="name" placeholder="e.g. Head Prefect" required>
+    <button class="btn btn-secondary" type="submit">Add Position</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Election Schedule</h2>
+  <form method="post">
+    <label>School Name
+      <input type="text" name="school_name" value="{{ config.school_name }}">
+    </label>
+    <div class="date-grid">
+      <label>Applications Open
+        <input type="datetime-local" name="application_start" value="{{ config.application_start or '' }}">
+      </label>
+      <label>Applications Close
+        <input type="datetime-local" name="application_end" value="{{ config.application_end or '' }}">
+      </label>
+      <label>Campaigning Starts
+        <input type="datetime-local" name="campaign_start" value="{{ config.campaign_start or '' }}">
+      </label>
+      <label>Voting Opens
+        <input type="datetime-local" name="voting_start" value="{{ config.voting_start or '' }}">
+      </label>
+      <label>Voting Closes
+        <input type="datetime-local" name="voting_end" value="{{ config.voting_end or '' }}">
+      </label>
+    </div>
+    <button class="btn btn-primary" type="submit">Save Schedule</button>
+  </form>
+</section>
+{% endblock %}

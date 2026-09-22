@@ -881,7 +881,7 @@ def apply():
     return redirect(url_for('student_dashboard'))
 @app.route('/')
 def home():
-    return render_template('login.html')  # Make sure 'login.html' matches your actual HTML template name in /templates
+    return render_template('login.html')  # or 'dm_login.html'
 
 
 if __name__ == '__main__':

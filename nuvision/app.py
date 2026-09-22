@@ -878,11 +878,14 @@ def apply():
         flash("Only .docx files are permitted.")
         
     return redirect(url_for('student_dashboard'))
+# --- Place this route right above the __main__ block ---
+@app.route('/')
+def home():
+    # Redirects visitors on the main domain directly to the DM login page
+    return redirect(url_for('dm_login'))
+
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-    @app.route('/')
-def index():
-    return render_template('index.html')  # or redirect(url_for('dm_login'))

@@ -1,3 +1,4 @@
+
 import os
 import sqlite3
 from datetime import datetime, timedelta
@@ -878,11 +879,9 @@ def apply():
         flash("Only .docx files are permitted.")
         
     return redirect(url_for('student_dashboard'))
-# --- Place this route right above the __main__ block ---
 @app.route('/')
 def home():
-    # Redirects visitors on the main domain directly to the DM login page
-    return redirect(url_for('dm_login'))
+    return render_template('login.html')  # Make sure 'login.html' matches your actual HTML template name in /templates
 
 
 if __name__ == '__main__':
